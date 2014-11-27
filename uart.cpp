@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <cstdarg>
 #include <cstring>
-
+#include <pi/utils.hpp>
 
 
 pi::baudMap baudInit()
@@ -45,7 +45,7 @@ pi::Uart::Uart()
 
 pi::Uart::Uart(unsigned int baud, std::string device /*= "/dev/ttyAMA0"*/) : _isOpen(false)
 {
-	open(baud, device);
+	this->open(baud, device);
 }
 
 void pi::Uart::open(unsigned int baud, std::string device /*= "/dev/ttyAMA0"*/)
@@ -53,13 +53,14 @@ void pi::Uart::open(unsigned int baud, std::string device /*= "/dev/ttyAMA0"*/)
     termios options ;
     speed_t termBaud ;
     int     status;
-
+	DEBUG("BAUD: " << baud << " termBaud: " << termBaud << "  device: " << device);
     baudMap::const_iterator it = _supportedBaud.find(baud);
 
-    if(it != _supportedBaud.end())
+    if(it == _supportedBaud.end())
     	return;
 
     termBaud = it->second;
+	
 
     if ((_fd = ::open (device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK)) == -1)
     return;
@@ -93,13 +94,14 @@ void pi::Uart::open(unsigned int baud, std::string device /*= "/dev/ttyAMA0"*/)
     ioctl (_fd, TIOCMSET, &status);
 
     usleep (10000) ;
+	DEBUG("FD : " << _fd);
 
     _isOpen=true;
 }
 
 pi::Uart::~Uart()
 {
-	close (_fd) ;
+	::close (_fd) ;
 }
 
 bool pi::Uart::isOpen()
@@ -117,6 +119,6 @@ char pi::Uart::read()
 
     if (::read (_fd, &x, 1) != 1)
         return -1 ;
-
+	DEBUG("READ: " << x);
     return ((int)x) & 0xFF ;
 }

@@ -3,9 +3,13 @@
 
 #include <stdexcept>
 #include <exception>
+#include <iostream>
+#include <sstream>
 
 namespace pi
 {
+	#define	DEBUG(x) do{ std::cout << x << std::endl; }while(false);
+
 
 template<typename T>
 inline std::string toString(const T& in)

@@ -19,8 +19,8 @@
 
 namespace pi
 {
-    typedef std::chrono::milliseconds ms;
-    typedef std::chrono::microseconds us;
+typedef std::chrono::milliseconds ms;
+typedef std::chrono::microseconds us;
 
 enum class Direction
 {
@@ -50,9 +50,6 @@ public:
 
     Gpio<PORT>& operator=(const std::bitset<1>& in);
 
-   // template<int PORTRHS>
-   // friend std::bitset<1>& operator=(std::bitset<1>& lhs, Gpio<PORTRHS>& rhs);
-
     template<int PORTIN>
     Gpio<PORT>& operator=(Gpio<PORTIN>& in);
 
@@ -60,7 +57,6 @@ public:
     void low(){set(0);};
     void isHigh(){return get() == 1;}
     void isLow(){return get() == 0;}
-    void toggle(std::chrono::milliseconds& in, double dutycycle=0.5);
 
 private:
     void init();
@@ -77,7 +73,7 @@ template<int PORT>
 Gpio<PORT>::Gpio()
 {
     if(mUsed)
-        throw Inception("Port Already In Use");
+        throw Inception(std::string("Port") + toString(PORT) + " Already In Use");
     mUsed=true;
     init();
 }
@@ -94,7 +90,7 @@ Gpio<PORT>::~Gpio()
     }
     else
     {
-
+        throw Inception(std::string("Unable to release Port") + toString(PORT));
     }
     mUsed=false;
 }
@@ -121,6 +117,7 @@ void Gpio<PORT>::setDirection(const Direction& dir)
     if(dirFile)
     {
         std::string dirStr = dir == Direction::IN? "in" : "out";
+        OUTPUT("Direction : " << dirStr);
         dirFile << dirStr;
         dirFile.close();
         mDir = dir == Direction::IN? Direction::IN : Direction::OUT;
@@ -134,15 +131,15 @@ void Gpio<PORT>::setDirection(const Direction& dir)
 template<int PORT>
 void Gpio<PORT>::set(const std::bitset<1>& val)
 {
-
     if(mDir != Direction::OUT)
         throw Inception("Cannot Set GPIO when Direction is not OUT");
 
     std::ofstream valFile;
-    valFile.open(mDirFile.c_str());
+    valFile.open(mValFile.c_str());
 
     if(valFile)
     {
+        OUTPUT("Set Value: " << val);
         mVal=val;
         valFile << val;
         valFile.close();
@@ -188,13 +185,6 @@ Gpio<PORT>& Gpio<PORT>::operator=(Gpio<PORTIN>& in)
     set(in.get());
     return *this;
 }
-
-/*template<int PORTRHS>
-std::bitset<1>& operator=(std::bitset<1>& lhs, Gpio<PORTRHS>& rhs)
-{
-	lhs = rhs.get();
-	return lhs;
-}*/
 
 }
 #endif // MY_RASPBERRYPI_GPIO_H
