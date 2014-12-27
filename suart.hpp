@@ -1,6 +1,7 @@
 #include <pi/gpio.hpp>
 #include <chrono>
 #include <thread>
+
 namespace pi
 {
 	template<int BAUD, int PIN>
@@ -8,7 +9,7 @@ namespace pi
 	{
 		Gpio<PIN> RX;
 		uint8_t ret(0);
-		RD.setDirection(Direction::IN);
+		RX.setDirection(Direction::IN);
 
 		while(!RX.get());
 
