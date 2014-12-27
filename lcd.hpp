@@ -5,8 +5,7 @@
 
 namespace pi
 {
-    typedef std::chrono::milliseconds ms;
-    ms LCD_DELAY(1);
+    pi::ms LCD_DELAY(1);
     unsigned int LINE1_RAM(0x80);
     unsigned int LINE2_RAM(0xc0);
     //unsigned int LINE3_RAM(0x80);

@@ -30,7 +30,8 @@ inline std::string toString(const T& in)
 
 namespace pi
 {
-
+    typedef std::chrono::milliseconds ms;
+    typedef std::chrono::microseconds us;
 class Inception : public std::runtime_error
 {
 public:
