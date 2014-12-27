@@ -14,7 +14,7 @@ namespace pi
 		while(!RX.get());
 
         std::this_thread::sleep_for(pi::us(long((1000000*1.5)/(BAUD))));
-        for( int i=0; i< 8 i++)
+        for( int i=0; i< 8 ;i++)
         {
             if(RX.get() == 1)
             {
