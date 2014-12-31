@@ -11,7 +11,7 @@ namespace pi
 		uint8_t ret(0);
 		RX.setDirection(Direction::IN);
 
-		while(!RX.get());
+		while(RX.get() == 1);
 
         std::this_thread::sleep_for(pi::us(long((1000000*1.5)/(BAUD))));
         for( int i=0; i< 8 ;i++)
