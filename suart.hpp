@@ -4,6 +4,8 @@
 
 namespace pi
 {
+namespace suart
+{
 	template<int BAUD, int PIN>
 	uint8_t get()
 	{
@@ -28,4 +30,5 @@ namespace pi
         }
         return ret;
 	}
+}
 }
