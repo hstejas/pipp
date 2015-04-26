@@ -5,11 +5,10 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#include <stdexcept>
-#include <exception>
 #include <bitset>
 #include <chrono>
 #include <bitset>
+#include <pi/utils.hpp>
 
 #ifndef NDEBUG
 #warning "OUTPUT Defined to stdout"
@@ -18,30 +17,10 @@
 #define OUTPUT(x)
 #endif
 
-
-
-template<typename T>
-inline std::string toString(const T& in)
-{
-    std::stringstream ss;
-    ss << in;
-    return ss.str();
-}
-
 namespace pi
 {
     typedef std::chrono::milliseconds ms;
     typedef std::chrono::microseconds us;
-class Inception : public std::runtime_error
-{
-public:
-    inline Inception(const std::string& in="",
-              const std::string& line = toString(__LINE__) ,
-              const std::string& func = toString(__PRETTY_FUNCTION__) ):std::runtime_error(in + " (" + line + ") " + func)
-            {
-            }
-    virtual ~Inception() noexcept {}
-};
 
 enum class Direction
 {

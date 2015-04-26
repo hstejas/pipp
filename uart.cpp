@@ -12,38 +12,56 @@
 #include <cstring>
 
 
-pi::Uart::Uart(unsigned int baud, std::string device) : _isOpen(false)
+
+pi::baudMap baudInit()
+{
+		pi::baudMap m;
+		m[50] = B50;
+		m[75] = B75;
+		m[110] = B110;
+		m[134] = B134;
+		m[150] = B150;
+		m[200] = B200;
+		m[300] = B300;
+		m[600] = B600;
+		m[1200] = B1200;
+		m[1800] = B1800;
+		m[2400] = B2400;
+		m[4800] = B4800;
+		m[9600] = B9600;
+		m[19200] = B19200;
+		m[38400] = B38400;
+		m[57600] = B57600;
+		m[115200] = B115200;
+		m[230400] = B230400;
+		return m;
+}
+
+const pi::baudMap pi::Uart::_supportedBaud = baudInit();
+
+pi::Uart::Uart()
+{
+}
+
+pi::Uart::Uart(unsigned int baud, std::string device /*= "/dev/ttyAMA0"*/) : _isOpen(false)
+{
+	open(baud, device);
+}
+
+void pi::Uart::open(unsigned int baud, std::string device /*= "/dev/ttyAMA0"*/)
 {
     termios options ;
-    speed_t myBaud ;
+    speed_t termBaud ;
     int     status;
 
-    switch (baud)
-    {
-    case     50:	myBaud =     B50 ; break ;
-    case     75:	myBaud =     B75 ; break ;
-    case    110:	myBaud =    B110 ; break ;
-    case    134:	myBaud =    B134 ; break ;
-    case    150:	myBaud =    B150 ; break ;
-    case    200:	myBaud =    B200 ; break ;
-    case    300:	myBaud =    B300 ; break ;
-    case    600:	myBaud =    B600 ; break ;
-    case   1200:	myBaud =   B1200 ; break ;
-    case   1800:	myBaud =   B1800 ; break ;
-    case   2400:	myBaud =   B2400 ; break ;
-    case   4800:	myBaud =   B4800 ; break ;
-    case   9600:	myBaud =   B9600 ; break ;
-    case  19200:	myBaud =  B19200 ; break ;
-    case  38400:	myBaud =  B38400 ; break ;
-    case  57600:	myBaud =  B57600 ; break ;
-    case 115200:	myBaud = B115200 ; break ;
-    case 230400:	myBaud = B230400 ; break ;
+    baudMap::const_iterator it = _supportedBaud.find(baud);
 
-    default:
-    return;
-    }
+    if(it != _supportedBaud.end())
+    	return;
 
-    if ((_fd = open (device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK)) == -1)
+    termBaud = it->second;
+
+    if ((_fd = ::open (device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK)) == -1)
     return;
 
     fcntl (_fd, F_SETFL, O_RDWR) ;
@@ -51,8 +69,8 @@ pi::Uart::Uart(unsigned int baud, std::string device) : _isOpen(false)
     tcgetattr (_fd, &options) ;
 
     cfmakeraw   (&options) ;
-    cfsetispeed (&options, myBaud) ;
-    cfsetospeed (&options, myBaud) ;
+    cfsetispeed (&options, termBaud) ;
+    cfsetospeed (&options, termBaud) ;
 
     options.c_cflag |= (CLOCAL | CREAD) ;
     options.c_cflag &= ~PARENB ;
@@ -78,6 +96,7 @@ pi::Uart::Uart(unsigned int baud, std::string device) : _isOpen(false)
 
     _isOpen=true;
 }
+
 pi::Uart::~Uart()
 {
 	close (_fd) ;
@@ -92,7 +111,7 @@ void pi::Uart::read(std::string& )
 {
 	
 }
-int pi::Uart::read()
+char pi::Uart::read()
 {
     uint8_t x ;
 
