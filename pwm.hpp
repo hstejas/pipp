@@ -1,7 +1,7 @@
 #ifndef MY_RASPBERRYPI_PWM_H
 #define MY_RASPBERRYPI_PWM_H
 
-#include <pi/gpio.hpp>
+#include <gpio.hpp>
 #include <thread>
 #include <chrono>
 

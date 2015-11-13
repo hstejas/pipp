@@ -30,5 +30,10 @@ namespace suart
         }
         return ret;
 	}
+    
+    template<int BAUD, int PIN>
+	void put(uint8_t out)
+	{
+	}
 }
 }
